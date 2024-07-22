@@ -110,23 +110,23 @@
     } else if (type === 'complementary') {
       // calculate complementary colors based on color
       const complementary = [(hsl[0] + 180) % 360, hsl[1], hsl[2]];
-      baseColors = [complementary, hsl];
+      baseColors = [hsl, complementary];
     } else if (type === 'split-complementary') {
       // calculate split complementary colors based on color
-      const left = [(hsl[0] - 30 + 360) % 360, hsl[1], hsl[2]];
-      const right = [(hsl[0] + 30) % 360, hsl[1], hsl[2]];
-      baseColors = [left, hsl, right];
+      const left = [(hsl[0] + 180 - 30 + 360) % 360, hsl[1], hsl[2]];
+      const right = [(hsl[0] + 180 + 30) % 360, hsl[1], hsl[2]];
+      baseColors = [hsl, left, right];
     } else if (type === 'triadic') {
       // calculate triadic colors based on color
       const left = [(hsl[0] - 120 + 360) % 360, hsl[1], hsl[2]];
       const right = [(hsl[0] + 120) % 360, hsl[1], hsl[2]];
-      baseColors = [left, hsl, right];
+      baseColors = [hsl, right, left];
     } else if (type === 'tetradic') {
       // calculate tetradic colors based on color
       const opposite = [(hsl[0] + 180) % 360, hsl[1], hsl[2]];
       const left = [(hsl[0] - 90 + 360) % 360, hsl[1], hsl[2]];
       const right = [(hsl[0] + 90) % 360, hsl[1], hsl[2]];
-      baseColors = [left, hsl, right, opposite];
+      baseColors = [hsl, right, opposite, left];
     }
 
     console.log(baseColors);
