@@ -52,7 +52,7 @@
     return [h, s, l];
   };
 
-  const generateOneLinePalette = (color: number[], tempShift: number, satShift: number, numColors: number) => {
+  const generateOneLinePalette = (color: number[], hShift: number, sShift: number, lShift: number, numColors: number) => {
     // color: [h, s, l]
     const h = color[0];
     const s = color[1];
@@ -62,16 +62,16 @@
     const palette = [];
     // To left side
     for (let i = numColors / 2; i >= 0; i--) {
-      const newH = (h - tempShift * i + 360) % 360;
-      const newS = s - satShift * i;
-      const newL = l - satShift * i;
+      const newH = (h - hShift * i + 360) % 360;
+      const newS = s - sShift * i;
+      const newL = l - lShift * i;
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
     }
     // To right side
     for (let i = 1; i < numColors / 2; i++) {
-      const newH = (h + tempShift * i) % 360;
-      const newS = s - satShift * i;
-      const newL = l + satShift * i;
+      const newH = (h + hShift * i) % 360;
+      const newS = s - sShift * i;
+      const newL = l + lShift * i;
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
     }
 
@@ -84,11 +84,12 @@
 
     const color = (document.getElementById('color') as HTMLInputElement).value;
     const type = (document.getElementById('type') as HTMLSelectElement).value;
-    const tempShift = (document.getElementById('temp-shift') as HTMLInputElement).value;
-    const satShift = (document.getElementById('sat-shift') as HTMLInputElement).value;
+    const hShift = (document.getElementById('h-shift') as HTMLInputElement).value;
+    const sShift = (document.getElementById('s-shift') as HTMLInputElement).value;
+    const lShift = (document.getElementById('l-shift') as HTMLInputElement).value;
     const numColors = (document.getElementById('num-colors') as HTMLInputElement).value;
 
-    console.log(color, type, tempShift, satShift, numColors);
+    console.log(color, type, hShift, sShift, lShift, numColors);
 
     const hsl = hexToHSL(color);
 
@@ -127,7 +128,7 @@
 
     let tempResults: string[][] = [];
     for (const baseColor of baseColors) {
-      const palette = generateOneLinePalette(baseColor, parseInt(tempShift), parseInt(satShift), parseInt(numColors));
+      const palette = generateOneLinePalette(baseColor, parseInt(hShift), parseInt(sShift), parseInt(lShift), parseInt(numColors));
       tempResults.push(palette);
     }
 
@@ -155,12 +156,15 @@
         <option value="triadic">Triadic</option>
         <option value="tetradic">Tetradic</option>
       </select>
-      <label for="temp-shift" class="block mb-1 text-left text-2xl">Temperature (hue) shift</label>
+      <label for="h-shift" class="block mb-1 text-left text-2xl">Temperature (hue) shift (H)</label>
       <p class="mb-2 opacity-70 text-left">This would depict how harsh the lighting is.</p>
-      <input type="range" id="temp-shift" class="block mb-8" max="20" value="10" />
-      <label for="sat-shift" class="block mb-1 text-left text-2xl">Saturation shift</label>
+      <input type="range" id="h-shift" class="block mb-8" max="20" value="10" />
+      <label for="s-shift" class="block mb-1 text-left text-2xl">Saturation shift (S)</label>
       <p class="mb-2 opacity-70 text-left">This would dictate how vibrant your illustration becomes (also depending on base color's saturation).</p>
-      <input type="range" id="sat-shift" class="block mb-8" max="20" value="10" />
+      <input type="range" id="s-shift" class="block mb-8" max="20" value="10" />
+      <label for="l-shift" class="block mb-1 text-left text-2xl">Brightness shift (L)</label>
+      <p class="mb-2 opacity-70 text-left">This indicates how far apart the colors are from each other.</p>
+      <input type="range" id="l-shift" class="block mb-8" max="20" value="10" />
       <label for="num-colors" class="block mb-2 text-left text-2xl">Number of colors</label>
       <input type="number" id="num-colors" class="block mb-8" value={7} />
       <button class="block">Generate</button>
