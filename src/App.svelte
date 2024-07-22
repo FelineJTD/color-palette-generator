@@ -52,26 +52,28 @@
     return [h, s, l];
   };
 
-  const generateOneLinePalette = (color: number[], hShift: number, sShift: number, lShift: number, numColors: number) => {
+  const generateOneLinePalette = (color: number[], hShift: number, sShift: number, lShift: number, scale: number, numColors: number) => {
     // color: [h, s, l]
     const h = color[0];
     const s = color[1];
     const l = color[2];
     console.log(h, s, l);
 
+    console.log("scale", 1/scale);
+
     const palette = [];
     // To left side
     for (let i = numColors / 2; i >= 0; i--) {
       const newH = (h - hShift * i + 360) % 360;
       const newS = s - sShift * i;
-      const newL = l - lShift * i;
+      const newL = l - lShift * i * (1/scale);
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
     }
     // To right side
     for (let i = 1; i < numColors / 2; i++) {
       const newH = (h + hShift * i) % 360;
       const newS = s - sShift * i;
-      const newL = l + lShift * i;
+      const newL = l + lShift * i * (1/scale);
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
     }
 
@@ -87,9 +89,10 @@
     const hShift = (document.getElementById('h-shift') as HTMLInputElement).value;
     const sShift = (document.getElementById('s-shift') as HTMLInputElement).value;
     const lShift = (document.getElementById('l-shift') as HTMLInputElement).value;
+    const lScale = (document.getElementById('l-scale') as HTMLSelectElement).value;
     const numColors = (document.getElementById('num-colors') as HTMLInputElement).value;
 
-    console.log(color, type, hShift, sShift, lShift, numColors);
+    console.log(color, type, hShift, sShift, lShift, lScale, numColors);
 
     const hsl = hexToHSL(color);
 
@@ -128,7 +131,7 @@
 
     let tempResults: string[][] = [];
     for (const baseColor of baseColors) {
-      const palette = generateOneLinePalette(baseColor, parseInt(hShift), parseInt(sShift), parseInt(lShift), parseInt(numColors));
+      const palette = generateOneLinePalette(baseColor, parseInt(hShift), parseInt(sShift), parseInt(lShift), parseFloat(lScale), parseInt(numColors));
       tempResults.push(palette);
     }
 
@@ -142,7 +145,7 @@
   <!-- DESCRIPTION -->
   <p class="mb-12">Use this website to generate color palette for your illustrations. The calculation is based on <a href="https://www.clipstudio.net/how-to-draw/archives/156922" target="_blank" rel="noopener noreferrer">Ann Maulina&apos;s color palette guide</a>, with modification to fit my own style.</p>
   <!-- MAIN CONTENT -->
-  <section class="flex">
+  <section class="flex relative">
     <!-- COLOR INPUT -->
     <form on:submit={handleGenerate}>
       <label for="color" class="block mb-2 text-left text-2xl">Base color</label>
@@ -164,20 +167,31 @@
       <input type="range" id="s-shift" class="block mb-8" max="20" value="10" />
       <label for="l-shift" class="block mb-1 text-left text-2xl">Brightness shift (L)</label>
       <p class="mb-2 opacity-70 text-left">This indicates how far apart the colors are from each other.</p>
-      <input type="range" id="l-shift" class="block mb-8" max="20" value="10" />
+      <input type="range" id="l-shift" class="block mb-8" max="60" value="20" />
+      <label for="l-scale" class="block mb-2 text-left text-2xl">Brightness shift scale</label>
+      <select id="l-scale" class="block mb-8">
+        <option value="1.067">1.067 - Minor Second</option>
+        <option value="1.125">1.125 - Major Second</option>
+        <option value="1.200">1.200 - Minor Third</option>
+        <option value="1.250">1.250 - Major Third</option>
+        <option value="1.333">1.333 - Perfect Fourth</option>
+        <option value="1.414">1.414 - Augmented Fifth</option>
+        <option value="1.500">1.500 - Perfect Fifth</option>
+        <option value="1.618" selected>1.618 - Golden Ratio</option>
+      </select>
       <label for="num-colors" class="block mb-2 text-left text-2xl">Number of colors</label>
       <input type="number" id="num-colors" class="block mb-8" value={7} />
       <button class="block">Generate</button>
     </form>
     <!-- RESULT -->
-    <div>
+    <div class="sticky top-0 right-0">
       {#if results.length > 0}
         <h2 class="mb-4">Result</h2>
         <div class="flex flex-col gap-2">
           {#each results as result}
             <div class="flex">
               {#each result as subresult}
-                <div class="w-16 h-16 rounded-full" style="background-color: {subresult}"></div>
+                <div class="w-16 h-16 rounded-full border border-black/20" style="background-color: {subresult}"></div>
               {/each}
             </div>
           {/each}
