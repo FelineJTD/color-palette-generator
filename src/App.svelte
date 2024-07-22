@@ -1,5 +1,5 @@
 <script lang="ts">
-  let results: string[] = [];
+  let results: string[][] = [];
 
   const hexToHSL = (hex: string) => {
     let r = 0, g = 0, b = 0;
@@ -52,17 +52,17 @@
     return [h, s, l];
   };
 
-  const generateOneLinePalette = (color: string, tempShift: number, satShift: number, numColors: number) => {
-    const hsl = hexToHSL(color);
-    const h = hsl[0];
-    const s = hsl[1];
-    const l = hsl[2];
+  const generateOneLinePalette = (color: number[], tempShift: number, satShift: number, numColors: number) => {
+    // color: [h, s, l]
+    const h = color[0];
+    const s = color[1];
+    const l = color[2];
     console.log(h, s, l);
 
     const palette = [];
     // To left side
     for (let i = numColors / 2; i >= 0; i--) {
-      const newH = (h - tempShift * i) % 360;
+      const newH = (h - tempShift * i + 360) % 360;
       const newS = s - satShift * i;
       const newL = l - satShift * i;
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
@@ -90,11 +90,48 @@
 
     console.log(color, type, tempShift, satShift, numColors);
 
-    const palette = generateOneLinePalette(color, parseInt(tempShift), parseInt(satShift), parseInt(numColors));
+    const hsl = hexToHSL(color);
 
-    console.log(palette);
+    let baseColors: number[][] = [];
 
-    results = palette;    
+    if (type === 'monochromatic') {
+      baseColors = [hsl];
+    } else if (type === 'analogous') {
+      // calculate analogous colors based on color
+      const left = [(hsl[0] - 30 + 360) % 360, hsl[1], hsl[2]];
+      const right = [(hsl[0] + 30) % 360, hsl[1], hsl[2]];
+      baseColors = [left, hsl, right];
+    } else if (type === 'complementary') {
+      // calculate complementary colors based on color
+      const complementary = [(hsl[0] + 180) % 360, hsl[1], hsl[2]];
+      baseColors = [complementary, hsl];
+    } else if (type === 'split-complementary') {
+      // calculate split complementary colors based on color
+      const left = [(hsl[0] - 30 + 360) % 360, hsl[1], hsl[2]];
+      const right = [(hsl[0] + 30) % 360, hsl[1], hsl[2]];
+      baseColors = [left, hsl, right];
+    } else if (type === 'triadic') {
+      // calculate triadic colors based on color
+      const left = [(hsl[0] - 120 + 360) % 360, hsl[1], hsl[2]];
+      const right = [(hsl[0] + 120) % 360, hsl[1], hsl[2]];
+      baseColors = [left, hsl, right];
+    } else if (type === 'tetradic') {
+      // calculate tetradic colors based on color
+      const opposite = [(hsl[0] + 180) % 360, hsl[1], hsl[2]];
+      const left = [(hsl[0] - 90 + 360) % 360, hsl[1], hsl[2]];
+      const right = [(hsl[0] + 90) % 360, hsl[1], hsl[2]];
+      baseColors = [left, hsl, right, opposite];
+    }
+
+    console.log(baseColors);
+
+    let tempResults: string[][] = [];
+    for (const baseColor of baseColors) {
+      const palette = generateOneLinePalette(baseColor, parseInt(tempShift), parseInt(satShift), parseInt(numColors));
+      tempResults.push(palette);
+    }
+
+    results = tempResults;
   };
 </script>
 
@@ -118,10 +155,12 @@
         <option value="triadic">Triadic</option>
         <option value="tetradic">Tetradic</option>
       </select>
-      <label for="temp-shift" class="block mb-2 text-left text-2xl">Temperature (hue) shift</label>
-      <input type="range" id="temp-shift" class="block mb-8" />
-      <label for="sat-shift" class="block mb-2 text-left text-2xl">Saturation shift</label>
-      <input type="range" id="sat-shift" class="block mb-8" />
+      <label for="temp-shift" class="block mb-1 text-left text-2xl">Temperature (hue) shift</label>
+      <p class="mb-2 opacity-70 text-left">This would depict how harsh the lighting is.</p>
+      <input type="range" id="temp-shift" class="block mb-8" max="20" value="10" />
+      <label for="sat-shift" class="block mb-1 text-left text-2xl">Saturation shift</label>
+      <p class="mb-2 opacity-70 text-left">This would dictate how vibrant your illustration becomes (also depending on base color's saturation).</p>
+      <input type="range" id="sat-shift" class="block mb-8" max="20" value="10" />
       <label for="num-colors" class="block mb-2 text-left text-2xl">Number of colors</label>
       <input type="number" id="num-colors" class="block mb-8" value={7} />
       <button class="block">Generate</button>
@@ -130,9 +169,13 @@
     <div>
       {#if results.length > 0}
         <h2 class="mb-4">Result</h2>
-        <div class="flex">
+        <div class="flex flex-col gap-2">
           {#each results as result}
-            <div class="w-16 h-16 rounded-full" style="background-color: {result}"></div>
+            <div class="flex">
+              {#each result as subresult}
+                <div class="w-16 h-16 rounded-full" style="background-color: {subresult}"></div>
+              {/each}
+            </div>
           {/each}
         </div>
       {/if}
