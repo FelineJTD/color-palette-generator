@@ -61,15 +61,15 @@
 
     const palette = [];
     // To left side
-    for (let i = 0; i < numColors / 2; i++) {
-      const newH = h - tempShift * i;
+    for (let i = numColors / 2; i >= 0; i--) {
+      const newH = (h - tempShift * i) % 360;
       const newS = s - satShift * i;
       const newL = l - satShift * i;
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
     }
     // To right side
     for (let i = 1; i < numColors / 2; i++) {
-      const newH = h + tempShift * i;
+      const newH = (h + tempShift * i) % 360;
       const newS = s - satShift * i;
       const newL = l + satShift * i;
       palette.push(`hsl(${newH}, ${newS}%, ${newL}%)`);
