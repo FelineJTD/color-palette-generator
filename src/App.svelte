@@ -151,9 +151,9 @@
   <!-- DESCRIPTION -->
   <p class="mb-12">Use this website to generate color palette for your illustrations. The calculation is based on <a href="https://www.clipstudio.net/how-to-draw/archives/156922" target="_blank" rel="noopener noreferrer">Ann Maulina&apos;s color palette guide</a>, with modification to fit my own style.</p>
   <!-- MAIN CONTENT -->
-  <section class="flex relative">
+  <section class="flex gap-12">
     <!-- COLOR INPUT -->
-    <form on:submit={handleGenerate}>
+    <form on:submit={handleGenerate} class="w-1/2">
       <label for="color" class="block mb-2 text-left text-2xl">Base color</label>
       <input type="color" id="color" class="block mb-8" value="#ff0000" on:change={handleGenerate} />
       <label for="type" class="block mb-2 text-left text-2xl">Color harmony</label>
@@ -165,7 +165,7 @@
         <option value="triadic">Triadic</option>
         <option value="tetradic">Tetradic</option>
       </select>
-      <label for="h-shift" class="block mb-1 text-left text-2xl">Temperature (hue) shift (H)</label>
+      <label for="h-shift" class="block mb-1 text-left text-2xl">Temperature/hue shift (H)</label>
       <p class="mb-2 opacity-70 text-left">This would depict how harsh the lighting is.</p>
       <input type="range" id="h-shift" class="block mb-8" max="20" value="10" on:change={handleGenerate} />
       <label for="s-shift" class="block mb-1 text-left text-2xl">Saturation shift (S)</label>
@@ -189,9 +189,10 @@
       <input type="number" id="num-colors" class="block mb-8" value={7} on:change={handleGenerate} />
     </form>
     <!-- RESULT -->
-    <div class="sticky top-0 right-0">
+    <!-- TODO: make this sticky -->
+    <div class="sticky top-0 right-0 w-1/2 flex flex-col items-end">
       {#if results.length > 0}
-        <h2 class="mb-4">Result</h2>
+        <h2 class="mb-2 text-left text-2xl">Result</h2>
         <div class="flex flex-col gap-2">
           {#each results as result}
             <div class="flex">
