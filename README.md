@@ -1,3 +1,7 @@
+# Color Palette Generator
+Color palette generator with simple calculation of the HSL channel of a color. Based on [Ann Maulina's color scheme guide](https://www.clipstudio.net/how-to-draw/archives/156922) with modifications. Try it out on [https://color.feliciasutandijo.my.id/](https://color.feliciasutandijo.my.id/).
+
+
 # Svelte + TS + Vite
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
