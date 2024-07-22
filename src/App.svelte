@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   let results: string[][] = [];
 
   const hexToHSL = (hex: string) => {
@@ -137,6 +139,10 @@
 
     results = tempResults;
   };
+
+  onMount(() => {
+    handleGenerate(new Event('submit'));
+  });
 </script>
 
 <main>
@@ -149,10 +155,10 @@
     <!-- COLOR INPUT -->
     <form on:submit={handleGenerate}>
       <label for="color" class="block mb-2 text-left text-2xl">Base color</label>
-      <input type="color" id="color" class="block mb-8" />
+      <input type="color" id="color" class="block mb-8" value="#ff0000" on:change={handleGenerate} />
       <label for="type" class="block mb-2 text-left text-2xl">Color harmony</label>
-      <select id="type" class="block mb-8">
-        <option value="monochromatic">Monochromatic</option>
+      <select id="type" class="block mb-8" on:change={handleGenerate}>
+        <option value="monochromatic" selected>Monochromatic</option>
         <option value="analogous">Analogous</option>
         <option value="complementary">Complementary</option>
         <option value="split-complementary">Split complementary</option>
@@ -161,15 +167,15 @@
       </select>
       <label for="h-shift" class="block mb-1 text-left text-2xl">Temperature (hue) shift (H)</label>
       <p class="mb-2 opacity-70 text-left">This would depict how harsh the lighting is.</p>
-      <input type="range" id="h-shift" class="block mb-8" max="20" value="10" />
+      <input type="range" id="h-shift" class="block mb-8" max="20" value="10" on:change={handleGenerate} />
       <label for="s-shift" class="block mb-1 text-left text-2xl">Saturation shift (S)</label>
       <p class="mb-2 opacity-70 text-left">This would dictate how vibrant your illustration becomes (also depending on base color's saturation).</p>
-      <input type="range" id="s-shift" class="block mb-8" max="20" value="10" />
+      <input type="range" id="s-shift" class="block mb-8" max="20" value="10" on:change={handleGenerate} />
       <label for="l-shift" class="block mb-1 text-left text-2xl">Brightness shift (L)</label>
       <p class="mb-2 opacity-70 text-left">This indicates how far apart the colors are from each other.</p>
-      <input type="range" id="l-shift" class="block mb-8" max="60" value="20" />
+      <input type="range" id="l-shift" class="block mb-8" max="60" value="20" on:change={handleGenerate} />
       <label for="l-scale" class="block mb-2 text-left text-2xl">Brightness shift scale</label>
-      <select id="l-scale" class="block mb-8">
+      <select id="l-scale" class="block mb-8" on:change={handleGenerate}>
         <option value="1.067">1.067 - Minor Second</option>
         <option value="1.125">1.125 - Major Second</option>
         <option value="1.200">1.200 - Minor Third</option>
@@ -180,8 +186,7 @@
         <option value="1.618" selected>1.618 - Golden Ratio</option>
       </select>
       <label for="num-colors" class="block mb-2 text-left text-2xl">Number of colors</label>
-      <input type="number" id="num-colors" class="block mb-8" value={7} />
-      <button class="block">Generate</button>
+      <input type="number" id="num-colors" class="block mb-8" value={7} on:change={handleGenerate} />
     </form>
     <!-- RESULT -->
     <div class="sticky top-0 right-0">
